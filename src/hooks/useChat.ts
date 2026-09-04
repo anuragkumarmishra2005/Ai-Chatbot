@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useMemo } from "react";
 import { Message, Thread, Attachment, streamChat, directStreamGroq, saveThreads as persistThreads, loadThreads, getApiKey, saveApiKey } from "@/lib/chat";
 
-const ENV_GROQ_KEY = (import.meta.env.VITE_GROQ_API_KEY as string) || null;
+const ENV_GROQ_KEY = (import.meta.env.VITE_GROQ_API_KEY as string) || (import.meta.env.VITE_GROQ_APT_KEY as string) || null;
 
 export function useChat() {
   const [threads, setThreads] = useState<Thread[]>(() => loadThreads());
