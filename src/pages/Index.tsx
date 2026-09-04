@@ -5,7 +5,7 @@ import { Sidebar } from "@/components/Sidebar";
 import { MessageBlock } from "@/components/MessageBlock";
 import { ThoughtTrace } from "@/components/ThoughtTrace";
 import { PromptBar } from "@/components/PromptBar";
-import { Sparkles, Wand2, Brain, Rocket } from "lucide-react";
+import { Rabbit, Wand2, Brain, Rocket } from "lucide-react";
 import { toast } from "sonner";
 
 const suggestions = [
@@ -15,7 +15,7 @@ const suggestions = [
 ];
 
 const Index = () => {
-  const { messages, isStreaming, error, send, clear } = useChat();
+  const { messages, threads, activeThreadId, isStreaming, error, send, clear, createThread, setActiveThreadId, deleteThread, apiKey, updateApiKey } = useChat();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,10 +30,18 @@ const Index = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       <div className="noise-overlay" />
-      <Sidebar onNewThread={clear} hasMessages={messages.length > 0} />
+      <Sidebar 
+        onNewThread={createThread} 
+        threads={threads}
+        activeThreadId={activeThreadId}
+        onSelectThread={setActiveThreadId}
+        onDeleteThread={deleteThread}
+        apiKey={apiKey}
+        onApiKeyChange={updateApiKey}
+      />
 
       <main className="flex-1 flex flex-col min-w-0 ambient-bg">
-        <div ref={scrollRef} className="flex-1 overflow-y-auto relative z-10">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto relative z-10 scrollbar-hide">
           {messages.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full px-6">
               <motion.div
@@ -49,8 +57,28 @@ const Index = () => {
                   transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                 >
                   <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary to-accent opacity-20 blur-xl" />
-                  <div className="relative w-20 h-20 rounded-2xl border border-primary/30 bg-card/80 backdrop-blur-sm flex items-center justify-center">
-                    <Sparkles className="h-8 w-8 text-primary" />
+                  <div className="relative w-20 h-20 rounded-2xl border border-primary/30 bg-card/80 backdrop-blur-sm flex items-center justify-center overflow-hidden">
+                    <motion.div
+                      className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-accent/10"
+                      animate={{ 
+                        rotate: [0, 360],
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                    />
+                    <motion.div
+                      whileHover={{ scale: 1.2, rotate: 5 }}
+                      animate={{ 
+                        y: [0, -4, 0],
+                        filter: ["drop-shadow(0 0 0px hsl(var(--primary)/0))", "drop-shadow(0 0 8px hsl(var(--primary)/0.5))", "drop-shadow(0 0 0px hsl(var(--primary)/0))"]
+                      }}
+                      transition={{ 
+                        y: { duration: 2, repeat: Infinity, ease: "easeInOut" },
+                        filter: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                      }}
+                    >
+                      <Rabbit className="h-8 w-8 text-primary relative z-10" />
+                    </motion.div>
                   </div>
                 </motion.div>
 
